@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>editPage</title>
+    <link rel="stylesheet" href="./bootstrap-5.2.3-dist/css/bootstrap.css">
+    <script src="./bootstrap-5.2.3-dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="./btn.css">
+    <!--使用vue-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.min.js"></script>
+
+    <!--使用ckeditor-->
+    <script src="https://cdn.ckeditor.com/ckeditor5/40.0.0/classic/ckeditor.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        ClassicEditor
+            .create(document.querySelector('#editor'))
+            .catch(error => {
+                console.error(error);
+            });
+
+    </script>
+    <style>
+        .ck-editor__editable {
+            min-height: 400px;
+
+        }
+
+        #btn {
+            background-color: #ccc;
+            width: 100px;
+            height: 100px;
+            line-height: 30px;
+            text-align: center;
+            border-radius: 15px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+
+        #content {
+            display: none;
+            background-color: #3d0303;
+            width: 900px;
+            height: 2900px;
+            line-height: 100px;
+            border-radius: 5px;
+            margin-left: 50px;
+        }
+
+        #toFront {
+            text-decoration: none;
+            color: white;
+        }
+
+        #toFront:hover {
+            color: rgb(194, 141, 28);
+        }
+
+        #purp {
+            width: 650px;
+            background-color: rgba(250, 250, 12, 0.733);
+        }
+
+        #purp:focus {
+            background-color: white;
+        }
+    </style>
+
+
+</head>
+
+
+<body style="
+background-image: url(./backgroundIMG/background.jpg) ;
+background-blend-mode: multiply;
+background-color: rgba(80, 31, 31, 0.6);
+background-repeat: no-repeat;
+background-attachment: fixed;
+margin: auto;
+">
+    <!-- 頁面頂端開始 -->
+    <div class="h2 above_area " style="background-image: url(./backgroundIMG/bluebackground.png); ">
+        <div>
+            <div class="above_bg d-flex">
+                <a id="toFront" href="index.html" class="m-3"><b>英雄攻略網</b></a>
+                <div id="username" class="ms-auto" style="margin-top: 15px; margin-right: 50px;  color: white;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 頁面頂端結束 -->
+    <!-- 編輯頁面開始 -->
+    <div style="display: flex; justify-content: center;  ">
+        <div style="display: flex; justify-content: center;  ">
+            <div style="  background-color: rgba(0, 0, 0, 0.8); width: 1000px ;  height: 100%;">
+                <div style="color: white; margin: 40px 30px; font-size: 40px;">編輯文章</div>
+                <div>
+                    <div id="btn" class="ms-5 mt-5 btn text-align-center">
+                        <div class="d-flex" style="margin-left:-35px; margin-top: -30px;">
+                            <div class="figure">
+                                <img id="" class="setenChamp btn" src="">
+                                <div class="figcaption sub">
+                                    <b id="setcnChamp" style="color: white;"></b>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="content" style="position: absolute; z-index: 10;">
+                    </div>
+                </div>
+
+                <!-- 文章主旨開始 -->
+                <div class="h1 justify-content-start mt-5 ms-5" style="color: white;">主旨:</div>
+                <div class=" d-flex justify-content-center mt-3 ">
+                    <input id="purp" type="text" value="">
+                </div>
+                <!-- 文章主旨結束 -->
+                <!-- 內文編輯 -->
+                <div class="h1 mt-5 ms-5" id="setContent" style="color: white;">內文:</div>
+                <div class="d-flex justify-content-center ">
+                    <textarea id="editor" name="content" placeholder="請在這裡填寫內容" value="">
+                </textarea>
+                </div>
+                <div class=" mb-5 mt-4 ms-3">
+                    <input id="putbtn" class="btn" type="button" value="編輯完成"> <span>|</span>
+                    <a id="cancelbtn" class="btn" href="./index.html">取消編輯</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="./CKEditor/styles.js"></script>
+
+    <script type="module">
+        import { champ } from "./heros.js";
+        $(document).ready(function () {
+            // 直接顯示使用者名稱
+            $('#username').text(sessionStorage.getItem('username'));
+        });
+        // 功能與create.html相同
+        document.addEventListener('click', function () {
+
+            $('#content').slideUp();
+        }, true);
+
+        var selectedHero;
+        document.getElementById('btn').addEventListener('click', function () {
+            $("#content").empty();
+            var heroContainer = $('<div class="hero-container d-flex flex-wrap"></div>');
+            $.each(champ, function (index, item) {
+                var chooseHero = `
+                        <div  class = "d-flex" >
+                            <div class="figure" style="position: relative; text-align: center; margin: 10px;">
+                                <img id="${item.enName}" class="btn" src="./${item.src}" style="width: 100px; height: auto;">
+                                <div class="figcaption sub" style="position: absolute; top: 50px; right:0px; width: 100%; color: white;">
+                                <b>${item.cnName}</b>
+                            </div>
+                        </div>
+                    `;
+                heroContainer.append(chooseHero);
+                $("#content").append(heroContainer);
+                var confimHero = `
+                    <div class = "d-flex" style = "margin-left:-35px; margin-top: -30px;">
+                        <div class="figure" >
+                            <img id = "${item.enName}" class = "btn subImg" src=./${item.src} >
+                            <div class="figcaption sub" style = "color: white;">
+                                <b id = "setcnChamp">${item.cnName}</b>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                $(`#${item.enName}`).click(function () {
+                    selectedHero = item;
+                    $("#btn").empty();
+                    $("#btn").replaceAll($("#btn").append(confimHero));
+                })
+            });
+            $('#content').slideDown("auto");
+        });
+
+        var editorContent;
+        ClassicEditor.create(document.querySelector('#editor'), {
+            // 這裡可以設定 plugin
+        })
+            .then(editor => {
+                console.log('Editor was initialized', editor);
+                editor.model.document.on('change:data', () => {
+                    editorContent = editor.getData();
+                });
+
+                // 获取文章数据
+                const urlParams = new URLSearchParams(window.location.search);
+                const titleId = urlParams.get('id') || 1; // 或者从其他地方获取初始值
+                sessionStorage.setItem("titleId", titleId);
+                const url = `/title/item/${titleId}`;
+
+                // 发送 GET 请求以获取相应标题的数据
+                fetch(url)
+                    .then(response => response.json())
+                    .then(item => {
+                        // 将文章内容设置为编辑器的初始内容
+                        editor.setData(item.contentTxt);
+                    })
+                    .catch(error => console.error('Error:', error));
+            })
+            .catch(err => {
+                console.error(err.stack);
+            });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const titleId = urlParams.get('id') || 1;  // 或者从其他地方获取初始值
+        sessionStorage.setItem("titleId", titleId);
+        const url = `/title/item/${titleId}`;
+        var item;
+        $.get(url, function (e) {
+
+            item = e;
+            $("img").prop("src", item.src);
+            $("img").prop("id", item.enChamp);
+            $("#setcnChamp").prop("innerText", item.cnChamp);
+            $("#purp").prop("value", item.title);
+        });
+
+        $("#putbtn").on('click', async function () {
+
+            var getTime = new Date();
+            var subtime = getTime.getFullYear() +
+                "-" + (getTime.getMonth() + 1).toString().padStart(2, "0") +
+                "-" + getTime.getDate().toString().padStart(2, "0") +
+                " " + getTime.getHours().toString().padStart(2, "0") +
+                ":" + getTime.getMinutes().toString().padStart(2, "0");
+
+            var getImg = $("#btn img").prop("src");
+            var transImg = '.' + getImg.replace(/.*\/\/[^\/]+/, '');
+
+            // 對新增時間做修改，ID保持不變
+            var dataToServer = {
+                titleId: titleId,
+                enChamp: $("img").prop("id"),
+                cnChamp: $("#setcnChamp").text(),
+                src: transImg,
+                author: $("#username").text(),
+                title: $("#purp").prop("value"),
+                contentTxt: editorContent,
+                titleTime: `於${subtime} 已編輯`
+            }
+
+            var result = await $.ajax({
+                type: "put",
+                url: "/title/item",
+                contentType: "application/json",
+                data: JSON.stringify(dataToServer)
+            });
+
+            window.location = "./index.html";
+        })
+
+
+
+    </script>
+</body>
+
+</html>

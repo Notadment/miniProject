@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        #loginbtn:hover {
+            background-color: #2980b9;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        function userLogin() {
+            var username = document.getElementById('username').value;
+
+        // 模擬登入請求（用實際的登入邏輯替換這裡）
+        var loginResponse = { success: true, username: username };
+
+        if (loginResponse.success) {
+            // 將使用者名稱保存到 session storage 中
+            sessionStorage.setItem('username', username);
+
+            // 獲取先前的頁面 URL
+            var previousPage = sessionStorage.getItem('previousPage');
+
+            // 重定向到先前的頁面或默認的主頁面
+            window.location.href = previousPage || 'http://localhost:8000/';
+        } else {
+            alert('登入失敗。請檢查您的憑據。');
+        }
+        }
+    </script>
+</head>
+
+<body>
+    <div id="login" class="login-container" style="background-color: #f4f4f4;
+    padding: 20px;
+    border-radius: 8px;
+    margin: auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); width: 300px; ">
+        <h2>Login</h2>
+        <form id="loginForm" style="display: flex; flex-direction: column;">
+            <!-- 使用者輸入欄位 -->
+            <label for="username" style=" margin-bottom: 8px;">Username:</label>
+            <input type="text" id="username" name="username" style=" padding: 8px;
+        margin-bottom: 16px;">
+
+            <!-- 實際應該包含在您的表單中 -->
+            <!-- <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required> -->
+
+            <button id="loginbtn" type="button" onclick="userLogin()" style="background-color: #3498db;
+        color: #fff;
+        padding: 10px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;">Login</button>
+        </form>
+    </div>
+</body>
+
+</html>

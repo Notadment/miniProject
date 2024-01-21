@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>createPage</title>
+    <link rel="stylesheet" href="./bootstrap-5.2.3-dist/css/bootstrap.css">
+    <script src="./bootstrap-5.2.3-dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="./btn.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!--使用vue-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.17/vue.min.js"></script>
+
+    <!--使用ckeditor-->
+
+    <script src="https://cdn.ckeditor.com/ckeditor5/40.0.0/classic/ckeditor.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/40.0.0/classic/translations/zh-cn.js"></script> <!-- 中文翻譯插件 -->
+    <script>
+        // 文字編輯器初始化
+        ClassicEditor
+            .create(document.querySelector('#editor'))
+            .catch(error => {
+                console.error(error);
+            });
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue-ckeditor2@2.0.9/dist/vue-ckeditor2.js"></script>
+    <style>
+        .ck-editor__editable {
+            min-height: 400px;
+
+        }
+
+        #btn {
+            background-color: #ccc;
+            width: 100px;
+            height: 100px;
+            line-height: 30px;
+            text-align: center;
+            border-radius: 15px;
+            cursor: pointer;
+            margin: 10px 0;
+
+        }
+
+        #content {
+            display: none;
+            background-color: #3d0303;
+            width: 900px;
+            height: 2900px;
+            line-height: 100px;
+            border-radius: 5px;
+            margin-left: 50px;
+        }
+
+        #purp {
+            width: 650px;
+            background-color: rgba(250, 250, 12, 0.733);
+        }
+
+        #purp:focus {
+            background-color: white;
+        }
+
+        #toFront {
+            text-decoration: none;
+            color: white;
+        }
+
+        #toFront:hover {
+            color: rgb(194, 141, 28);
+        }
+    </style>
+
+</head>
+<!--  -->
+
+<body style="
+background-image: url(./backgroundIMG/background.jpg) ;
+background-blend-mode: multiply;
+background-color: rgba(80, 31, 31, 0.6);
+background-repeat: no-repeat;
+background-attachment: fixed;
+margin: auto;
+">
+    <!-- 頁面頂端開始 -->
+    <div class="h2 above_area " style="background-image: url(./backgroundIMG/bluebackground.png); ">
+        <div>
+            <div class="above_bg d-flex">
+                <a id="toFront" href="index.html" class="m-3"><b>英雄攻略網</b></a>
+                <div id="username" class="ms-auto" style="margin-top: 15px; margin-right: 50px;  color: white;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 頁面頂端結束 -->
+    <!-- 編輯頁面開始 -->
+    <div style="display: flex; justify-content: center;  ">
+        <div style="  background-color: rgba(0, 0, 0, 0.8); width: 1000px ;  height: 100%;">
+            <div style="color: white; margin: 40px 30px; font-size: 40px;">發表新文章</div>
+            <div>
+                <div id="btn" class="ms-5 mt-5 btn text-align-center">
+                    選擇<br>英雄
+                </div>
+                <div id="content" style="position: absolute; z-index: 10; ">
+
+                </div>
+            </div>
+
+            <!-- 文章主旨開始 -->
+            <div class="h1 justify-content-start mt-5 ms-5" style="color: white;">主旨:</div>
+            <div class=" d-flex justify-content-center mt-3 ">
+                <input id="purp" type="text" value="">
+            </div>
+            <!-- 文章主旨結束 -->
+            <!-- 內文編輯 -->
+            <div class="h1 mt-5 ms-5" style="color: white;">內文:</div>
+            <div class="d-flex justify-content-center ">
+                <textarea id="editor" name="content" placeholder="請在這裡填寫內容" value="">
+                </textarea>
+            </div>
+            <div class=" mb-5 mt-4 ms-3">
+                <input id="subButton" class="btn" type="button" value="發布文章" /> <span>|</span>
+                <a id="cancelbtn" class="btn" href="./index.html">取消發文</a>
+            </div>
+        </div>
+    </div>
+    <script src="./CKEditor/styles.js"></script>
+
+    <script type="module">
+        import { champ } from "./heros.js";
+
+        // 在頁面載入時執行
+        $(document).ready(function () {
+            // 直接顯示用戶名
+            $('#username').text(sessionStorage.getItem('username'));
+        });
+
+        // 當按下任一地方直接下拉式方塊上滑
+        document.addEventListener('click', function () {
+
+            $('#content').slideUp();
+        }, true);
+
+        // 按下選擇英雄按鈕事件
+        var selectedHero;
+        document.getElementById('btn').addEventListener('click', function () {
+            // 先清空在增加避免重複加載
+            $("#content").empty();
+            var heroContainer = $('<div class="hero-container d-flex flex-wrap"></div>');
+            // 在下拉式方塊產生英雄清單
+            $.each(champ, function (index, item) {
+                var chooseHero = `
+                    <div class="figure" style="position: relative; text-align: center; margin: 10px;">
+                        <img id="${item.enName}" class="btn" src="./${item.src}" style="width: 100px; height: auto;">
+                        <div class="figcaption sub" style="position: absolute; top: 50px; right:0px; width: 100%; color: white;">
+                            <b>${item.cnName}</b>
+                        </div>
+                    </div>
+                    `;
+                heroContainer.append(chooseHero);
+                $("#content").append(heroContainer);
+                // 設定插入欲放入的元素標籤與內容
+                var confimHero = `
+                    <div  class = "d-flex" style = "margin-left:-35px; margin-top: -30px; ">
+                            <div class="figure" >
+                                <img id = "${item.enName}" class = "btn " src=./${item.src} >
+                                <div class="figcaption sub" style = "color: white;">
+                                    <b >${item.cnName}</b>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    // 在每個圖案都有按鈕事件
+                $(`#${item.enName}`).click(function () {
+                    selectedHero = item;
+                    $("#btn").empty();
+                    $("#btn").replaceAll($("#btn").append(confimHero));
+
+                })
+            });
+            // 完成事件後收回下拉式方塊
+            $('#content').slideDown("auto");
+        });
+        // 先宣告全域變數來讀資料
+        var editorContent;
+        ClassicEditor.create(document.querySelector('#editor'), {
+            // 這裡可以設定 plugin
+        })
+            .then(editor => {
+                console.log('Editor was initialized', editor);
+                editor.model.document.on('change:data', () => {
+                    // 擷取內部的資料內容
+                    editorContent = editor.getData();
+                });
+
+            })
+            .catch(err => {
+                console.error(err.stack);
+            });
+            // 按下編輯完成的按鈕事件
+        $("#subButton").on('click', async function () {
+            
+
+            var getTime = new Date();
+            var subtime = getTime.getFullYear() +
+                "-" + (getTime.getMonth() + 1).toString().padStart(2, "0") +
+                "-" + getTime.getDate().toString().padStart(2, "0") +
+                " " + getTime.getHours().toString().padStart(2, "0") +
+                ":" + getTime.getMinutes().toString().padStart(2, "0");
+
+            // 要接收的資料
+            var dataToServer = {
+                enChamp: selectedHero.enName,
+                cnChamp: selectedHero.cnName,
+                src: selectedHero.src,
+                author: $("#username").text(),
+                title: $("#purp").prop("value"),
+                contentTxt: editorContent,
+                titleTime: subtime
+            }
+            // 將資料傳回 data.json
+            var result = await $.ajax({
+                type: "post",
+                url: "/title/create",
+                contentType: "application/json",
+                data: JSON.stringify(dataToServer)
+            });
+            // 編輯完成後回到首頁(待修正的問題)
+            window.location = "./index.html";
+
+        })
+
+    </script>
+</body>
+
+</html>

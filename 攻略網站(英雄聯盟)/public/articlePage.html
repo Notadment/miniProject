@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>contentPage</title>
+    <link rel="stylesheet" href="./bootstrap-5.2.3-dist/css/bootstrap.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="./bootstrap-5.2.3-dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="./btn.css">
+    <style>
+        #toFront {
+            text-decoration: none;
+            color: white;
+        }
+
+        #toFront:hover {
+            color: rgb(194, 141, 28);
+        }
+    </style>
+
+</head>
+
+<body style="background-image: url(./backgroundIMG/background.jpg) ;
+background-blend-mode: multiply;
+background-color: rgba(80, 31, 31, 0.6);
+background-repeat: no-repeat;
+background-attachment: fixed;
+margin: auto;">
+    <!-- 頁面頂端開始 -->
+    <div class="h2 above_area " style="background-image: url(./backgroundIMG/bluebackground.png) ; ">
+        <div>
+            <div class="above_bg d-flex">
+                <a id="toFront" href="index.html" class="m-3"><b>英雄攻略網</b></a>
+                <div id="userArea" class="ms-auto m-3">
+                    <span id="username" style="color: white;"></span>
+                    <button id="logoutBtn" onclick="userLogout()" class="button logoutbtn">登出</button>
+                </div>
+                <a id="loginBtn" href="loginPage.html" class="ms-auto m-3"><button
+                        class="button loginbtn">登入</button></a>
+            </div>
+        </div>
+    </div>
+    <!-- 頁面頂端結束 -->
+    <div class="d-flex justify-content-center ">
+        <div id="articleIn"
+            style="background-color: rgba(0, 0, 0, 0.5); width: 1000px; margin: auto; justify-content: center;">
+            <!-- 從這開始都要用append -->
+            <div class="d-flex m-5 flex-wrap">
+                <figure>
+                    <img src="./ChampionImg/AatroxSquare.jpg">
+                    <figcaption style="color: lightgray; font-size: 30px; text-align: center;">
+                        厄薩斯
+                    </figcaption>
+                </figure>
+
+                <div class="d-flex row " style="margin-left: 200px; font-size: 20px;">
+                    <div id="authorName" style="color: lightgray; ">作者</div>
+                    <div style="color: lightgray; margin-left: -40px;">發布時間</div>
+                </div>
+
+                <div class="ms-auto">
+                    <button id="editbtn">編輯</button>
+                    <button id="delbtn">刪除</button>
+                </div>
+            </div>
+            <div>
+                <div>
+                    <div class="row">
+                        <div class="d-flex justify-content-center row">
+                            <div class="col-12 h3 mt-3"
+                                style=" color: white;width: 800px; background-color: rgb(5, 63, 5);">
+                                文章主旨</div>
+                            <div class="mt-3 "
+                                style="color: white; width: 800px; background-color: rgb(5, 63, 5); font-size: larger;">
+                                內文123</div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+
+        var articleList = [
+            { titleId: 1, enChamp: "Aatrox", cnChamp: "厄薩斯", src: "./ChampionImg/AatroxSquare.jpg", username: "dog", title: "title XXX", contentTxt: "123", upTotal: 5, downTotal: 19, titleTime: "subTime" },
+            { titleId: 2, enChamp: "Ahri", cnChamp: "阿璃", src: "./ChampionImg/AhriSquare.jpg", username: "cat", title: "title B", contentTxt: "asdf12s3", upTotal: 15, downTotal: 119, titleTime: "subTime" }
+        ]
+
+
+        // 讀取相對應的後端ID以擷取資料
+        $(document).ready(function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const titleId = urlParams.get('id');
+
+            // 發送 GET 請求以獲取相應標題的數據
+            fetch(`/title/item/${titleId}`)
+                .then(response => response.json())
+                .then(article => {
+                    // 生成動態的文章內容
+                    var contentInsert = `
+                    <div class="d-flex m-5 flex-wrap">
+                        <figure>
+                            <img src="${article.src}">
+                            <figcaption style="color: lightgray; font-size: 30px; text-align: center;">
+                                ${article.cnChamp}
+                            </figcaption>
+                        </figure>
+                        <div class="d-flex row " style="margin-left: 200px; font-size: 20px;">
+                            <div style="color: lightgray; ">作者: <span id="authorName" style="color: lightgray; ">${article.author}</span></div>
+                            <div style="color: lightgray; margin-left: -40px;">發布時間: <span>${article.titleTime}</span></div>
+                        </div>
+                        <div class="ms-auto">
+                            <a id = "editbtn" href = "./editPage.html?id=${article.titleId}" onclick="doEdit(${article.titleId})" class="btn">編輯</a>
+                            <button id="delbtn" class="btn">刪除</button>
+                        </div>
+                    </div>
+                    <div>
+                        <div>                            
+                            <div class="row">
+                                <div class="d-flex justify-content-center row">
+                                    <div class="col-12 h3 mt-3"
+                                        style=" color: white;width: 800px; background-color: black;">
+                                        ${article.title}
+                                    </div>
+                                    <div class="mt-3 mb-5"
+                                        style="color: white; width: 800px; background-color: black; font-size: larger;">
+                                        ${article.contentTxt}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                    $("#articleIn").empty();
+                    // 將動態生成的文章內容插入到指定的元素中
+                    $("#articleIn").append(contentInsert);
+
+                    $(document).ready(function () {
+                        // 檢查是否登入
+                        const loggedInUser = sessionStorage.getItem('username');
+
+                        if (loggedInUser) {
+                            // 已登入，顯示用戶名稱或其他登入後的內容
+                            $('#username').text(loggedInUser);
+
+                            // 隱藏登入按鈕，顯示登出按鈕，或其他相應的操作
+                            $('#loginBtn').hide();
+                            $('#logoutBtn').show();
+
+                            // 獲取文章的作者
+                            const authorName = $("#authorName").text();
+
+                            // 如果登入的使用者是文章的作者，顯示編輯按鈕和刪除按鈕
+                            if (loggedInUser === authorName) {
+                                $('#editbtn').show();
+                                $('#delbtn').show();
+                            } else {
+                                // 不是作者，隱藏編輯按鈕和刪除按鈕
+                                $('#editbtn').hide();
+                                $('#delbtn').hide();
+                            }
+                        } else {
+                            // 未登入，隱藏登出按鈕，顯示登入按鈕，或其他相應的操作
+                            $('#logoutBtn').hide();
+                            $('#loginBtn').show();
+
+                            // 隱藏編輯按鈕和刪除按鈕
+                            $('#editbtn').hide();
+                            $('#delbtn').hide();
+                        }
+
+                        // 存儲當前頁面的 URL 到 session storage
+                        sessionStorage.setItem('previousPage', window.location.href);
+                    });
+
+
+                })
+                .catch(error => console.error('Error:', error));
+
+        });
+
+        // 編輯按鈕事件
+        function doEdit(e) {
+            console.log(titleId)
+            sessionStorage.setItem("titleId", e);
+        }
+
+
+        $(document).ready(function () {
+            // 檢查是否登入
+            const loggedInUser = sessionStorage.getItem('username');
+
+            if (loggedInUser) {
+                // 已登入，顯示用戶名稱或其他登入後的內容
+                $('#username').text(loggedInUser);
+
+                // 隱藏登入按鈕，顯示登出按鈕，或其他相應的操作
+                $('#loginBtn').hide();
+                $('#logoutBtn').show();
+
+                // 獲取文章的作者
+                const authorName = $("#authorName").text();
+
+                // 如果登入的使用者是文章的作者，顯示編輯按鈕和刪除按鈕
+                if (loggedInUser === authorName) {
+                    $('#editbtn').show();
+                    $('#delbtn').show();
+                } else {
+                    // 不是作者，隱藏編輯按鈕和刪除按鈕
+                    $('#editbtn').hide();
+                    $('#delbtn').hide();
+                }
+            } else {
+                // 未登入，隱藏登出按鈕，顯示登入按鈕，或其他相應的操作
+                $('#logoutBtn').hide();
+                $('#loginBtn').show();
+
+                // 隱藏編輯按鈕和刪除按鈕
+                $('#editbtn').hide();
+                $('#delbtn').hide();
+
+            }
+
+            // 存儲當前頁面的 URL 到 session storage
+            sessionStorage.setItem('previousPage', window.location.href);
+        });
+
+        // 登出功能
+        function userLogout() {
+            // 清除 session storage 中的使用者名稱
+            sessionStorage.removeItem('username');
+
+
+
+            // 獲取先前的頁面 URL
+            var previousPage = sessionStorage.getItem('previousPage');
+
+            // 跳轉到先前的頁面或默認的主頁面
+            window.location.href = previousPage || 'http://localhost:8000/';
+        }
+
+        // 刪除按鈕點擊事件
+        $('#articleIn').on('click', '#delbtn', async function () {
+            // 使用 JavaScript 內建的 confirm 函數顯示刪除確認對話框
+            var confirmDelete = confirm("確定要刪除此文章嗎？");
+
+            // 如果用戶按下確定
+            if (confirmDelete) {
+                const urlParams = new URLSearchParams(window.location.search);
+                const titleId = urlParams.get('id');
+
+                // 使用 Promise 和 async/await 實現延遲效果
+                const delay = (ms) => new Promise(res => setTimeout(res, ms));
+
+                // 執行刪除操作
+                try {
+                    // 等待1秒
+                    await delay(1000);
+
+                    // 發送 DELETE 請求以刪除相應標題的數據
+                    const response = await fetch(`/title/delete/${titleId}`, {
+                        method: 'DELETE',
+                    });
+
+                    const result = await response.text();
+                    console.log('伺服器回應:', result);
+
+                    // 根據伺服器回應進行處理
+                    if (result === 'row deleted.') {
+                        console.log('刪除成功');
+                        // 文章成功刪除
+                        window.location.href = '/index.html';
+                    } else {
+                        console.error('未預期的伺服器回應:', result);
+                    }
+                } catch (error) {
+                    console.error('錯誤:', error);
+                }
+            }
+            // 否則不執行任何操作
+        });
+
+    </script>
+
+</body>
+
+</html>
